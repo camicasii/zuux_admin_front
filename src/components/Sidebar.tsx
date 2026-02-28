@@ -13,6 +13,8 @@ export function Sidebar() {
         { name: 'Batch Transfer', href: '/', icon: Send },
         { name: 'Web Users', href: '/dashboard/users', icon: Users },
         { name: 'Telegram Users', href: '/dashboard/telegram', icon: MessageSquare },
+        { name: 'Bot Users', href: '/dashboard/bot-users', icon: Users },
+        { name: 'Bot Tasks', href: '/dashboard/bot-tasks', icon: MessageSquare },
     ]
 
     return (
