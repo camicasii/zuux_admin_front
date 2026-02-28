@@ -32,10 +32,10 @@ export default function RootLayout({
       >
         <Providers>
           <header className="fixed top-0 w-full border-b border-white/5 bg-zinc-950/80 backdrop-blur-md z-50">
-            <div className="h-16 flex items-center justify-between px-6">
+            <div className="h-16 flex items-center justify-between px-6 pl-14 md:pl-6">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-lg shadow-lg shadow-emerald-500/20" />
-                <h1 className="font-bold text-lg tracking-tight">Zuux Admin</h1>
+                <h1 className="font-bold text-lg tracking-tight hidden sm:block">Zuux Admin</h1>
               </div>
               <ConnectButton />
             </div>
