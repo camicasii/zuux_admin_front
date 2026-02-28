@@ -2,12 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Send, Users, MessageSquare, Menu, X } from 'lucide-react'
+import { Send, Users, MessageSquare, Menu, X, LogOut } from 'lucide-react'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function Sidebar() {
     const pathname = usePathname()
     const [isOpen, setIsOpen] = useState(false)
+    const { isAuthenticated, logout } = useAuth()
 
     const links = [
         { name: 'Batch Transfer', href: '/', icon: Send },
@@ -62,6 +64,18 @@ export function Sidebar() {
                         )
                     })}
                 </nav>
+
+                {isAuthenticated && (
+                    <div className="mt-auto px-4 pb-6">
+                        <button
+                            onClick={logout}
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 transition-colors font-medium"
+                        >
+                            <LogOut className="w-5 h-5" />
+                            Logout
+                        </button>
+                    </div>
+                )}
             </div>
         </>
     )

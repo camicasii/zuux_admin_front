@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Plus, Edit2, Trash2, LogIn, X, Wallet } from 'lucide-react'
+import { Plus, Edit2, Trash2, X } from 'lucide-react'
 import { fetchBotApi } from '@/lib/api'
-import { useAccount, useSignMessage } from 'wagmi'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface Task {
     id: number
@@ -17,12 +17,8 @@ interface Task {
 export default function BotTasksPage() {
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState(true)
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-    // Wagmi hooks
-    const { address, isConnected } = useAccount()
-    const { signMessageAsync } = useSignMessage()
-    const [isSigningIn, setIsSigningIn] = useState(false)
+    const { logout } = useAuth()
 
     // Modal state
     const [isModalOpen, setModalOpen] = useState(false)
@@ -36,59 +32,8 @@ export default function BotTasksPage() {
     })
 
     useEffect(() => {
-        const token = localStorage.getItem('botAdminToken')
-        if (token) {
-            setIsAuthenticated(true)
-        } else {
-            setLoading(false)
-        }
+        loadTasks()
     }, [])
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            loadTasks()
-        }
-    }, [isAuthenticated])
-
-    const handleLoginWithWallet = async () => {
-        if (!address) {
-            alert("Please connect your wallet first using the top right button.")
-            return
-        }
-
-        try {
-            setIsSigningIn(true)
-
-            // 1. Fetch nonce from backend
-            const { nonce } = await fetchBotApi('/auth/nonce')
-
-            // 2. Sign message with wallet
-            const message = `Sign this message to prove you own this wallet.\nNonce: ${nonce}`
-            const signature = await signMessageAsync({ message })
-
-            // 3. Send signature and address to backend for verification
-            const { token } = await fetchBotApi('/auth/verify', {
-                method: 'POST',
-                body: JSON.stringify({ address, signature, nonce, message })
-            })
-
-            // 4. Store JWT and set authenticated state
-            localStorage.setItem('botAdminToken', `Bearer ${token}`)
-            setIsAuthenticated(true)
-
-        } catch (err: any) {
-            console.error('Login failed:', err)
-            alert(err.message || 'Signature verification failed or wallet not authorized.')
-        } finally {
-            setIsSigningIn(false)
-        }
-    }
-
-    const handleLogout = () => {
-        localStorage.removeItem('botAdminToken')
-        setIsAuthenticated(false)
-        setTasks([])
-    }
 
     const loadTasks = async () => {
         try {
@@ -99,7 +44,7 @@ export default function BotTasksPage() {
             console.error(err)
             alert(err.message || 'Failed to fetch tasks.')
             if (err.message?.includes('403') || err.message?.includes('401')) {
-                handleLogout()
+                logout()
             }
         } finally {
             setLoading(false)
@@ -169,34 +114,6 @@ export default function BotTasksPage() {
         }
     }
 
-    if (!isAuthenticated) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
-                <div className="bg-zinc-900/50 p-8 rounded-2xl border border-white/10 w-full max-w-md backdrop-blur-md">
-                    <div className="flex justify-center mb-6">
-                        <div className="p-4 bg-emerald-500/10 rounded-full text-emerald-400">
-                            <Wallet className="w-8 h-8" />
-                        </div>
-                    </div>
-                    <h2 className="text-2xl font-bold text-center mb-2">Admin Dashboard</h2>
-                    <p className="text-zinc-400 text-center mb-6">
-                        {isConnected
-                            ? "Wallet connected! Sign a message to access the dashboard."
-                            : "Please connect your wallet using the button in the top right to continue."}
-                    </p>
-
-                    <button
-                        onClick={handleLoginWithWallet}
-                        disabled={!isConnected || isSigningIn}
-                        className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-lg px-4 py-3 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                        {isSigningIn ? 'Awaiting Signature...' : 'Sign In with Wallet'}
-                    </button>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -205,12 +122,6 @@ export default function BotTasksPage() {
                     <p className="text-zinc-400">Manage Telegram bot game tasks.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button
-                        onClick={handleLogout}
-                        className="px-4 py-2 border border-zinc-800 hover:bg-zinc-900 rounded-lg text-sm font-medium transition-colors text-zinc-300"
-                    >
-                        Logout API
-                    </button>
                     <button
                         onClick={() => handleOpenModal()}
                         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-white rounded-lg text-sm font-medium transition-opacity shadow-lg shadow-emerald-500/20"
