@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Send, Users, MessageSquare, Menu, X, LogOut } from 'lucide-react'
+import { Send, Users, MessageSquare, Menu, X, LogOut, Download } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -17,6 +17,7 @@ export function Sidebar() {
         { name: 'Telegram Users', href: '/dashboard/telegram', icon: MessageSquare },
         { name: 'Bot Users', href: '/dashboard/bot-users', icon: Users },
         { name: 'Bot Tasks', href: '/dashboard/bot-tasks', icon: MessageSquare },
+        { name: 'Export', href: '/dashboard/export', icon: Download },
     ]
 
     return (
