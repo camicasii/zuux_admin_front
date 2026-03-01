@@ -17,6 +17,7 @@ export function Sidebar() {
         { name: 'Telegram Users', href: '/dashboard/telegram', icon: MessageSquare },
         { name: 'Bot Users', href: '/dashboard/bot-users', icon: Users },
         { name: 'Bot Tasks', href: '/dashboard/bot-tasks', icon: MessageSquare },
+        { name: 'Bot Campaigns', href: '/dashboard/bot-campaigns', icon: MessageSquare },
         { name: 'Export', href: '/dashboard/export', icon: Download },
     ]
 

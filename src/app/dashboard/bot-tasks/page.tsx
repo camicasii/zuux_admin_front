@@ -12,10 +12,13 @@ interface Task {
     url: string
     points: number
     status: string
+    campaignId?: number
 }
 
 export default function BotTasksPage() {
     const [tasks, setTasks] = useState<Task[]>([])
+    const [campaigns, setCampaigns] = useState<any[]>([])
+    const [selectedCampaignId, setSelectedCampaignId] = useState<number | 'all'>('all')
     const [loading, setLoading] = useState(true)
 
     const { logout } = useAuth()
@@ -28,21 +31,43 @@ export default function BotTasksPage() {
         description: '',
         url: '',
         points: 0,
-        status: 'active'
+        status: 'active',
+        campaignId: ''
     })
 
     useEffect(() => {
-        loadTasks()
+        loadData()
     }, [])
 
-    const loadTasks = async () => {
+    const loadData = async () => {
         try {
             setLoading(true)
-            const data = await fetchBotApi('/task/all')
-            setTasks(data)
+
+            // Fetch both tasks and campaigns
+            const [tasksData, campaignsData] = await Promise.all([
+                fetchBotApi('/task/all'),
+                fetchBotApi('/campaigns/all')
+            ])
+
+            setTasks(tasksData)
+
+            // Sort campaigns: Active first, then by ID descending
+            const sortedCampaigns = campaignsData.sort((a: any, b: any) => {
+                if (a.status === 'active' && b.status !== 'active') return -1
+                if (b.status === 'active' && a.status !== 'active') return 1
+                return b.id - a.id
+            })
+            setCampaigns(sortedCampaigns)
+
+            // Auto-select active campaign if it exists
+            const activeCampaign = sortedCampaigns.find((c: any) => c.status === 'active')
+            if (activeCampaign) {
+                setSelectedCampaignId(activeCampaign.id)
+            }
+
         } catch (err: any) {
             console.error(err)
-            alert(err.message || 'Failed to fetch tasks.')
+            alert(err.message || 'Failed to fetch data.')
             if (err.message?.includes('403') || err.message?.includes('401')) {
                 logout()
             }
@@ -51,7 +76,19 @@ export default function BotTasksPage() {
         }
     }
 
+    const loadTasksOnly = async () => {
+        try {
+            const data = await fetchBotApi('/task/all')
+            setTasks(data)
+        } catch (err: any) {
+            console.error(err)
+        }
+    }
+
     const handleOpenModal = (task?: Task) => {
+        // Find default campaign for new tasks
+        const defaultCampaignId = campaigns.find(c => c.status === 'active')?.id || ''
+
         if (task) {
             setEditingTask(task)
             setFormData({
@@ -59,7 +96,8 @@ export default function BotTasksPage() {
                 description: task.description || '',
                 url: task.url || '',
                 points: task.points || 0,
-                status: task.status || 'active'
+                status: task.status || 'active',
+                campaignId: task.campaignId?.toString() || defaultCampaignId.toString()
             })
         } else {
             setEditingTask(null)
@@ -68,7 +106,8 @@ export default function BotTasksPage() {
                 description: '',
                 url: '',
                 points: 0,
-                status: 'active'
+                status: 'active',
+                campaignId: selectedCampaignId !== 'all' ? selectedCampaignId.toString() : defaultCampaignId.toString()
             })
         }
         setModalOpen(true)
@@ -77,25 +116,25 @@ export default function BotTasksPage() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
+            const payload = {
+                ...formData,
+                points: Number(formData.points),
+                campaignId: formData.campaignId ? Number(formData.campaignId) : null
+            }
+
             if (editingTask) {
                 await fetchBotApi(`/task/${editingTask.id}`, {
                     method: 'PUT',
-                    body: JSON.stringify({
-                        ...formData,
-                        points: Number(formData.points)
-                    })
+                    body: JSON.stringify(payload)
                 })
             } else {
                 await fetchBotApi('/task/create', {
                     method: 'POST',
-                    body: JSON.stringify({
-                        ...formData,
-                        points: Number(formData.points)
-                    })
+                    body: JSON.stringify(payload)
                 })
             }
             setModalOpen(false)
-            loadTasks()
+            loadTasksOnly()
         } catch (err: any) {
             console.error(err)
             alert(err.message || 'Failed to save task.')
@@ -107,12 +146,17 @@ export default function BotTasksPage() {
             await fetchBotApi(`/task/${id}${hard ? '?hard=true' : ''}`, {
                 method: 'DELETE'
             })
-            loadTasks()
+            loadTasksOnly()
         } catch (err: any) {
             console.error(err)
             alert(err.message || 'Failed to delete task.')
         }
     }
+
+    // Filter tasks based on selected campaign
+    const filteredTasks = selectedCampaignId === 'all'
+        ? tasks
+        : tasks.filter(t => t.campaignId === selectedCampaignId)
 
     return (
         <div className="space-y-6">
@@ -121,7 +165,20 @@ export default function BotTasksPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Bot Tasks</h1>
                     <p className="text-zinc-400">Manage Telegram bot game tasks.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <select
+                        className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                        value={selectedCampaignId}
+                        onChange={(e) => setSelectedCampaignId(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    >
+                        <option value="all">All Campaigns</option>
+                        {campaigns.map(camp => (
+                            <option key={camp.id} value={camp.id}>
+                                {camp.title} {camp.status === 'active' ? '(Active)' : ''}
+                            </option>
+                        ))}
+                    </select>
+
                     <button
                         onClick={() => handleOpenModal()}
                         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-white rounded-lg text-sm font-medium transition-opacity shadow-lg shadow-emerald-500/20"
@@ -139,6 +196,7 @@ export default function BotTasksPage() {
                             <tr>
                                 <th className="px-6 py-4 text-sm font-semibold text-zinc-400">ID</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-zinc-400">Task Info</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-zinc-400">Campaign</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-zinc-400 text-center">Points</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-zinc-400 text-center">Status</th>
                                 <th className="px-6 py-4 text-sm font-semibold text-zinc-400 text-right">Actions</th>
@@ -147,90 +205,97 @@ export default function BotTasksPage() {
                         <tbody className="divide-y divide-white/5">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-zinc-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
                                         Loading tasks...
                                     </td>
                                 </tr>
-                            ) : tasks.length === 0 ? (
+                            ) : filteredTasks.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-zinc-500">
-                                        No tasks found.
+                                    <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
+                                        No tasks found for this selection.
                                     </td>
                                 </tr>
                             ) : (
-                                tasks.map((task) => (
-                                    <tr key={task.id} className="hover:bg-zinc-800/20 transition-colors">
-                                        <td className="px-6 py-4 text-zinc-400 font-mono text-sm">
-                                            #{task.id}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-medium text-white">
-                                                {task.title}
-                                            </div>
-                                            <div className="text-sm text-zinc-500 mt-1 max-w-sm truncate" title={task.url || ''}>
-                                                {task.url || 'No URL'}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className="font-bold text-emerald-400">
-                                                {task.points}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${task.status === 'active'
-                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                                : 'bg-red-500/10 text-red-400 border-red-500/20'
-                                                }`}>
-                                                {task.status || 'unknown'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <div className="relative group">
-                                                    <button
-                                                        onClick={() => handleOpenModal(task)}
-                                                        className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                                                    >
-                                                        <Edit2 className="w-4 h-4" />
-                                                    </button>
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-800 text-xs text-zinc-300 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                                                        Edit Task
-                                                    </div>
-                                                </div>
+                                filteredTasks.map((task) => {
+                                    const taskCampaign = campaigns.find(c => c.id === task.campaignId)
 
-                                                {task.status !== 'deleted' && (
+                                    return (
+                                        <tr key={task.id} className="hover:bg-zinc-800/20 transition-colors">
+                                            <td className="px-6 py-4 text-zinc-400 font-mono text-sm">
+                                                #{task.id}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="font-medium text-white">
+                                                    {task.title}
+                                                </div>
+                                                <div className="text-sm text-zinc-500 mt-1 max-w-sm truncate" title={task.url || ''}>
+                                                    {task.url || 'No URL'}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 text-zinc-400 text-sm">
+                                                {taskCampaign ? taskCampaign.title : <span className="opacity-50">Unassigned</span>}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <span className="font-bold text-emerald-400">
+                                                    {task.points}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${task.status === 'active'
+                                                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                    : 'bg-red-500/10 text-red-400 border-red-500/20'
+                                                    }`}>
+                                                    {task.status || 'unknown'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex justify-end gap-2">
                                                     <div className="relative group">
                                                         <button
-                                                            onClick={() => handleDelete(task.id, false)}
-                                                            className="p-2 text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 rounded-lg transition-colors"
+                                                            onClick={() => handleOpenModal(task)}
+                                                            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
                                                         >
-                                                            <Trash2 className="w-4 h-4 opacity-50" />
+                                                            <Edit2 className="w-4 h-4" />
                                                         </button>
                                                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-800 text-xs text-zinc-300 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                                                            Deactivate Task
+                                                            Edit Task
                                                         </div>
                                                     </div>
-                                                )}
 
-                                                <div className="relative group">
-                                                    <button
-                                                        onClick={() => {
-                                                            if (confirm('Are you sure you want to PERMANENTLY delete this task?')) {
-                                                                handleDelete(task.id, true)
-                                                            }
-                                                        }}
-                                                        className="p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                    <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-zinc-800 text-xs text-rose-300 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                                                        Permanent Delete
+                                                    {task.status !== 'deleted' && (
+                                                        <div className="relative group">
+                                                            <button
+                                                                onClick={() => handleDelete(task.id, false)}
+                                                                className="p-2 text-yellow-500/70 hover:text-yellow-400 hover:bg-yellow-500/10 rounded-lg transition-colors"
+                                                            >
+                                                                <Trash2 className="w-4 h-4 opacity-50" />
+                                                            </button>
+                                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-800 text-xs text-zinc-300 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                                                Deactivate Task
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="relative group">
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm('Are you sure you want to PERMANENTLY delete this task?')) {
+                                                                    handleDelete(task.id, true)
+                                                                }
+                                                            }}
+                                                            className="p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                        <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-zinc-800 text-xs text-rose-300 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                                            Permanent Delete
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                        </tr>
+                                    )
+                                })
                             )}
                         </tbody>
                     </table>
@@ -283,6 +348,22 @@ export default function BotTasksPage() {
                                     value={formData.url}
                                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                                 />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-zinc-400 mb-1">Campaign</label>
+                                <select
+                                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
+                                    value={formData.campaignId}
+                                    onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
+                                >
+                                    <option value="">No Campaign</option>
+                                    {campaigns.map(camp => (
+                                        <option key={camp.id} value={camp.id}>
+                                            {camp.title} {camp.status === 'active' ? '(Active)' : ''}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
