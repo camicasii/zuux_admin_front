@@ -26,7 +26,7 @@ export function Sidebar() {
             {/* Mobile Toggle Button (Visible only on mobile) */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden fixed top-3 left-4 z-[60] p-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white"
+                className="md:hidden fixed top-3 left-4 z-[60] p-2 bg-[#0a1510] border border-[#1e3d2f] rounded-lg text-[#9fb8a8] hover:text-white"
             >
                 {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -41,7 +41,7 @@ export function Sidebar() {
 
             {/* Sidebar container */}
             <div className={`
-                flex flex-col border-r border-white/5 bg-zinc-950/95 backdrop-blur-md h-screen fixed left-0 top-0 pt-20 z-50 
+                flex flex-col border-r border-[#1e3d2f]/50 bg-[#0f1f17]/95 backdrop-blur-md h-screen fixed left-0 top-0 pt-20 z-50 
                 w-64 transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
@@ -56,8 +56,8 @@ export function Sidebar() {
                                 href={link.href}
                                 onClick={() => setIsOpen(false)} // close on mobile after click
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium ${isActive
-                                    ? 'bg-emerald-500/10 text-emerald-400'
-                                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                                    ? 'bg-[#4ade80]/10 text-[#4ade80] border border-[#4ade80]/20'
+                                    : 'text-[#9fb8a8] hover:bg-[#0a1510] hover:text-white'
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />
@@ -71,7 +71,7 @@ export function Sidebar() {
                     <div className="mt-auto px-4 pb-6">
                         <button
                             onClick={logout}
-                            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 transition-colors font-medium"
+                            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-[#9fb8a8] hover:bg-[#0a1510] hover:text-white transition-colors font-medium"
                         >
                             <LogOut className="w-5 h-5" />
                             Logout
