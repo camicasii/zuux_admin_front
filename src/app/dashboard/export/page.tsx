@@ -125,57 +125,57 @@ export default function ExportPage() {
         <div className="space-y-8 max-w-5xl mx-auto pb-12">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Export Data</h1>
-                <p className="text-[#9fb8a8] mt-2">Export Web and Bot user data to CSV.</p>
+                <p className="text-zinc-400 mt-2">Export Web and Bot user data to CSV.</p>
             </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#0a1510]/50 border border-[#1e3d2f] rounded-2xl p-6 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4ade80]/5 rounded-full blur-3xl -mr-10 -mt-10" />
-                    <h3 className="text-lg font-medium text-[#9fb8a8]">Total Web Users</h3>
+                <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-10 -mt-10" />
+                    <h3 className="text-lg font-medium text-zinc-300">Total Web Users</h3>
                     <div className="mt-4 flex items-baseline gap-2">
                         {isLoadingStats ? (
-                            <Loader2 className="w-8 h-8 animate-spin text-[#4ade80]" />
+                            <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
                         ) : (
                             <span className="text-4xl font-bold text-white">{stats.webTotal.toLocaleString()}</span>
                         )}
-                        <span className="text-sm text-[#6b9b7f]">registered users</span>
+                        <span className="text-sm text-zinc-500">registered users</span>
                     </div>
                 </div>
 
-                <div className="bg-[#0a1510]/50 border border-[#1e3d2f] rounded-2xl p-6 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#e85a4f]/5 rounded-full blur-3xl -mr-10 -mt-10" />
-                    <h3 className="text-lg font-medium text-[#9fb8a8]">Total Bot Users</h3>
+                <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-10 -mt-10" />
+                    <h3 className="text-lg font-medium text-zinc-300">Total Bot Users</h3>
                     <div className="mt-4 flex items-baseline gap-2">
                         {isLoadingStats ? (
-                            <Loader2 className="w-8 h-8 animate-spin text-[#e85a4f]" />
+                            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                         ) : (
                             <span className="text-4xl font-bold text-white">{stats.botTotal.toLocaleString()}</span>
                         )}
-                        <span className="text-sm text-[#6b9b7f]">active players</span>
+                        <span className="text-sm text-zinc-500">active players</span>
                     </div>
                 </div>
             </div>
 
             {error && (
-                <div className="bg-[#e85a4f]/10 border border-[#e85a4f]/20 text-[#e85a4f] p-4 rounded-xl flex items-start gap-3">
+                <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                     <p>{error}</p>
                 </div>
             )}
 
             {successMessage && (
-                <div className="bg-[#4ade80]/10 border border-[#4ade80]/20 text-[#4ade80] p-4 rounded-xl flex items-center gap-3">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl flex items-center gap-3">
                     <Check className="w-5 h-5 shrink-0" />
                     <p>{successMessage}</p>
                 </div>
             )}
 
             {/* Configuration */}
-            <div className="bg-[#0a1510]/40 border border-[#1e3d2f]/50 rounded-2xl overflow-hidden">
-                <div className="p-6 border-b border-[#1e3d2f]/50">
+            <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden">
+                <div className="p-6 border-b border-zinc-800">
                     <h2 className="text-xl font-semibold text-white">Select Fields to Export</h2>
-                    <p className="text-sm text-[#9fb8a8] mt-1">
+                    <p className="text-sm text-zinc-400 mt-1">
                         Choose which data columns to include in the generated CSV. Users will be matched by their Telegram ID where possible.
                     </p>
                 </div>
@@ -183,18 +183,18 @@ export default function ExportPage() {
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Web Fields */}
                     <div className="space-y-4">
-                        <h3 className="font-medium text-[#4ade80] flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#4ade80]" />
+                        <h3 className="font-medium text-emerald-400 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
                             Web App Data
                         </h3>
                         <div className="space-y-3">
                             {(Object.keys(webFields) as WebField[]).map(field => (
                                 <label key={`web-${field}`} className="flex items-center gap-3 cursor-pointer group">
                                     <div className={`w-5 h-5 flex items-center justify-center rounded border transition-colors ${webFields[field]
-                                        ? 'bg-[#4ade80] border-[#4ade80]'
-                                        : 'border-[#1e3d2f] bg-[#0f1f17] group-hover:border-[#4ade80]/50'
+                                        ? 'bg-emerald-500 border-emerald-500'
+                                        : 'border-zinc-700 bg-zinc-950 group-hover:border-emerald-500/50'
                                         }`}>
-                                        {webFields[field] && <Check className="w-3.5 h-3.5 text-[#0f1f17] stroke-[3]" />}
+                                        {webFields[field] && <Check className="w-3.5 h-3.5 text-zinc-950 stroke-[3]" />}
                                     </div>
                                     <input
                                         type="checkbox"
@@ -203,7 +203,7 @@ export default function ExportPage() {
                                         onChange={() => toggleWebField(field)}
                                         disabled={field === 'telegram_id'}
                                     />
-                                    <span className={`text-sm select-none ${field === 'telegram_id' ? 'text-[#6b9b7f] line-through' : 'text-[#9fb8a8] group-hover:text-white'}`}>
+                                    <span className={`text-sm select-none ${field === 'telegram_id' ? 'text-zinc-500 line-through' : 'text-zinc-300 group-hover:text-white'}`}>
                                         {webFieldLabels[field]}
                                     </span>
                                 </label>
@@ -213,18 +213,18 @@ export default function ExportPage() {
 
                     {/* Bot Fields */}
                     <div className="space-y-4">
-                        <h3 className="font-medium text-[#e85a4f] flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#e85a4f]" />
+                        <h3 className="font-medium text-blue-400 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-blue-500" />
                             Telegram Bot Data
                         </h3>
                         <div className="space-y-3">
                             {(Object.keys(botFields) as BotField[]).map(field => (
                                 <label key={`bot-${field}`} className="flex items-center gap-3 cursor-pointer group">
                                     <div className={`w-5 h-5 flex items-center justify-center rounded border transition-colors ${botFields[field]
-                                        ? 'bg-[#e85a4f] border-[#e85a4f]'
-                                        : 'border-[#1e3d2f] bg-[#0f1f17] group-hover:border-[#e85a4f]/50'
+                                        ? 'bg-blue-500 border-blue-500'
+                                        : 'border-zinc-700 bg-zinc-950 group-hover:border-blue-500/50'
                                         }`}>
-                                        {botFields[field] && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
+                                        {botFields[field] && <Check className="w-3.5 h-3.5 text-zinc-950 stroke-[3]" />}
                                     </div>
                                     <input
                                         type="checkbox"
@@ -233,7 +233,7 @@ export default function ExportPage() {
                                         onChange={() => toggleBotField(field)}
                                         disabled={field === 'telegramId'}
                                     />
-                                    <span className={`text-sm select-none ${field === 'telegramId' ? 'text-[#6b9b7f] line-through' : 'text-[#9fb8a8] group-hover:text-white'}`}>
+                                    <span className={`text-sm select-none ${field === 'telegramId' ? 'text-zinc-500 line-through' : 'text-zinc-300 group-hover:text-white'}`}>
                                         {botFieldLabels[field]}
                                     </span>
                                 </label>
@@ -242,11 +242,11 @@ export default function ExportPage() {
                     </div>
                 </div>
 
-                <div className="p-6 bg-[#0f1f17]/50 border-t border-[#1e3d2f]/50 flex justify-end">
+                <div className="p-6 bg-zinc-950/50 border-t border-zinc-800 flex justify-end">
                     <button
                         onClick={handleExport}
                         disabled={isExporting}
-                        className="flex items-center gap-2 px-6 py-3 bg-[#e85a4f] hover:bg-[#d94a3f] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold transition-colors shadow-lg shadow-red-500/20"
+                        className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-200 text-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-semibold transition-colors shadow-lg shadow-white/5"
                     >
                         {isExporting ? (
                             <>

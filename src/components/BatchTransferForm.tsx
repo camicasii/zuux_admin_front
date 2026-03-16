@@ -177,49 +177,49 @@ export function BatchTransferForm() {
     return (
         <div className="w-full max-w-2xl mx-auto space-y-6">
             {/* Type Selector */}
-            <div className="flex bg-[#0a1510] rounded-lg p-1 border border-[#1e3d2f]">
+            <div className="flex bg-zinc-900 rounded-lg p-1 border border-zinc-800">
                 <button
                     onClick={() => setTransferType('ETH')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${transferType === 'ETH' ? 'bg-[#1e3d2f] text-[#4ade80] shadow-sm' : 'text-[#9fb8a8] hover:text-white'}`}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${transferType === 'ETH' ? 'bg-zinc-800 text-emerald-400 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Droplets className="w-4 h-4" /> Native Gas (ETH)
                 </button>
                 <button
                     onClick={() => setTransferType('ERC20')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${transferType === 'ERC20' ? 'bg-[#1e3d2f] text-[#4ade80] shadow-sm' : 'text-[#9fb8a8] hover:text-white'}`}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${transferType === 'ERC20' ? 'bg-zinc-800 text-emerald-400 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     <Coins className="w-4 h-4" /> Custom ERC-20
                 </button>
             </div>
 
             {transferType === 'ERC20' && (
-                <div className="space-y-2 bg-[#4ade80]/5 p-4 rounded-xl border border-[#4ade80]/10">
-                    <label className="text-sm font-medium text-[#9fb8a8]">
+                <div className="space-y-2 bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/10">
+                    <label className="text-sm font-medium text-emerald-200">
                         ERC-20 Token Contract Address
                     </label>
                     <input
                         type="text"
                         value={tokenAddress}
                         onChange={(e) => setTokenAddress(e.target.value)}
-                        className="w-full bg-[#0a1510] border border-[#1e3d2f] rounded-lg p-3 text-sm font-mono focus:ring-1 focus:ring-[#4ade80] focus:border-[#4ade80] transition-colors text-white"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm font-mono focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                         placeholder="0x..."
                     />
                     {tokenSymbol && (
-                        <p className="text-xs text-[#4ade80] font-medium">✓ Detected Token: {tokenSymbol} ({tokenDecimals} decimals)</p>
+                        <p className="text-xs text-emerald-400 font-medium">✓ Detected Token: {tokenSymbol} ({tokenDecimals} decimals)</p>
                     )}
                 </div>
             )}
 
-            <div className="flex bg-[#0a1510] rounded-lg p-1 border border-[#1e3d2f]">
+            <div className="flex bg-zinc-900 rounded-lg p-1 border border-zinc-800">
                 <button
                     onClick={() => { setIsSingleAmountMode(false); setParsedData([]); setErrorMsg('') }}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${!isSingleAmountMode ? 'bg-[#1e3d2f] text-white shadow-sm' : 'text-[#9fb8a8] hover:text-white'}`}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${!isSingleAmountMode ? 'bg-zinc-800 text-zinc-200 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     Paste List (Address, Amount)
                 </button>
                 <button
                     onClick={() => { setIsSingleAmountMode(true); setParsedData([]); setErrorMsg('') }}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${isSingleAmountMode ? 'bg-[#1e3d2f] text-white shadow-sm' : 'text-[#9fb8a8] hover:text-white'}`}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${isSingleAmountMode ? 'bg-zinc-800 text-zinc-200 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                     Single Global Amount
                 </button>
@@ -227,24 +227,24 @@ export function BatchTransferForm() {
 
             {isSingleAmountMode && (
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-[#9fb8a8]">
+                    <label className="text-sm font-medium text-zinc-300">
                         Amount to send to each wallet
                     </label>
                     <input
                         type="text"
                         value={globalAmount}
                         onChange={(e) => setGlobalAmount(e.target.value)}
-                        className="w-full bg-[#0a1510] border border-[#1e3d2f] rounded-xl p-4 text-sm font-mono focus:ring-1 focus:ring-[#4ade80] focus:border-[#4ade80] transition-colors text-white"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-mono focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                         placeholder="0.5"
                     />
                 </div>
             )}
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-[#9fb8a8]">
+                <label className="text-sm font-medium text-zinc-300">
                     {isSingleAmountMode ? "Paste Wallet Addresses (One per line or comma separated)" : "Paste Wallet Addresses and Amounts (Comma, Space, or Tab separated)"}
                 </label>
-                <p className="text-xs text-[#6b9b7f]">
+                <p className="text-xs text-zinc-500">
                     {isSingleAmountMode ? "Example: 0x123...abc\n0x456...def" : "Example: 0x123...abc, 1.5"}
                 </p>
                 <textarea
@@ -253,20 +253,20 @@ export function BatchTransferForm() {
                         setInputVal(e.target.value)
                         setParsedData([])
                     }}
-                    className="w-full h-48 bg-[#0a1510] border border-[#1e3d2f] rounded-xl p-4 text-sm font-mono focus:ring-1 focus:ring-[#4ade80] focus:border-[#4ade80] transition-colors text-white"
+                    className="w-full h-48 bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-mono focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                     placeholder={isSingleAmountMode ? "0x123...ABC\n0x456...DEF\n0x789...GHI" : "0x123...ABC, 0.5\n0x456...DEF, 1.25\n0x789...GHI, 2"}
                 />
             </div>
 
             <button
                 onClick={() => parseInput(inputVal)}
-                className="w-full py-3 bg-[#0a1510] hover:bg-[#1e3d2f] border border-[#1e3d2f] text-white rounded-xl font-medium transition-colors"
+                className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-medium transition-colors"
             >
                 Validate List
             </button>
 
             {errorMsg && (
-                <div className="flex items-center gap-2 text-[#e85a4f] bg-[#e85a4f]/10 p-4 rounded-xl text-sm border border-[#e85a4f]/20">
+                <div className="flex items-center gap-2 text-rose-400 bg-rose-400/10 p-4 rounded-xl text-sm">
                     <AlertCircle className="w-5 h-5 flex-shrink-0" />
                     <p>{errorMsg}</p>
                 </div>
@@ -274,23 +274,23 @@ export function BatchTransferForm() {
 
             {parsedData.length > 0 && !errorMsg && (
                 <div className="space-y-4">
-                    <div className="bg-[#4ade80]/10 border border-[#4ade80]/20 p-4 rounded-xl">
-                        <h3 className="text-[#4ade80] font-medium mb-4 flex items-center gap-2">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                        <h3 className="text-emerald-400 font-medium mb-4 flex items-center gap-2">
                             <CheckCircle2 className="w-5 h-5" />
                             Ready to Distribute {transferType === 'ERC20' ? tokenSymbol || 'Tokens' : 'ETH'}
                         </h3>
-                        <div className="flex justify-between text-sm text-[#9fb8a8] mb-2">
+                        <div className="flex justify-between text-sm text-zinc-300 mb-2">
                             <span>Total Wallets:</span>
-                            <span className="font-mono text-[#4ade80] font-bold">{parsedData.length}</span>
+                            <span className="font-mono text-emerald-400 font-bold">{parsedData.length}</span>
                         </div>
-                        <div className="flex justify-between text-sm text-[#9fb8a8] mb-2">
+                        <div className="flex justify-between text-sm text-zinc-300 mb-2">
                             <span>Total Value:</span>
-                            <span className="font-mono text-[#4ade80] font-bold">{formatUnits(totalValueWei, tokenDecimals)}</span>
+                            <span className="font-mono text-emerald-400 font-bold">{formatUnits(totalValueWei, tokenDecimals)}</span>
                         </div>
                         {transferType === 'ERC20' && (
-                            <div className="flex justify-between text-sm text-[#9fb8a8] mt-2 pt-2 border-t border-[#4ade80]/20">
+                            <div className="flex justify-between text-sm text-zinc-300 mt-2 pt-2 border-t border-emerald-500/20">
                                 <span>Current Allowance:</span>
-                                <span className={`font-mono font-bold ${needsApproval ? 'text-amber-400' : 'text-[#4ade80]'}`}>
+                                <span className={`font-mono font-bold ${needsApproval ? 'text-amber-400' : 'text-emerald-400'}`}>
                                     {formatUnits(currentAllowance, tokenDecimals)}
                                 </span>
                             </div>
@@ -301,7 +301,7 @@ export function BatchTransferForm() {
                         <button
                             onClick={handleApprove}
                             disabled={!isConnected || isTxPending || isConfirming}
-                            className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-[#0a1510] rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex justify-center items-center gap-2"
+                            className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-zinc-950 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex justify-center items-center gap-2"
                         >
                             {(isTxPending || isConfirming) && <Loader2 className="w-5 h-5 animate-spin" />}
                             {isTxPending ? "Confirming in Wallet..." :
@@ -312,7 +312,7 @@ export function BatchTransferForm() {
                         <button
                             onClick={handleSendBatch}
                             disabled={!isConnected || isTxPending || isConfirming}
-                            className="w-full py-3 bg-[#e85a4f] hover:bg-[#d94a3f] text-white rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex justify-center items-center gap-2 shadow-lg shadow-red-500/20"
+                            className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex justify-center items-center gap-2"
                         >
                             {(isTxPending || isConfirming) && <Loader2 className="w-5 h-5 animate-spin" />}
                             {isTxPending ? "Confirming in Wallet..." :
@@ -323,9 +323,9 @@ export function BatchTransferForm() {
                     )}
 
                     {isConfirmed && txHash && (
-                        <div className="text-center text-sm text-[#4ade80] mt-4">
+                        <div className="text-center text-sm text-emerald-400 mt-4">
                             Transaction Successful! <br />
-                            <a href={`https://basescan.org/tx/${txHash}`} target="_blank" rel="noreferrer" className="underline hover:text-[#22c55e]">View on BaseScan</a>
+                            <a href={`https://basescan.org/tx/${txHash}`} target="_blank" rel="noreferrer" className="underline hover:text-emerald-300">View on BaseScan</a>
                         </div>
                     )}
                 </div>

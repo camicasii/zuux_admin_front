@@ -189,20 +189,20 @@ export default function BotUsersPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Bot Users</h1>
-                    <p className="text-[#9fb8a8]">Manage Telegram bot users and scores.</p>
+                    <p className="text-zinc-400">Manage Telegram bot users and scores.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={handleCopyWallets}
                         disabled={isCopying}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#e85a4f] hover:bg-[#d94a3f] text-white rounded-lg text-sm font-bold transition-colors disabled:opacity-50 shadow-lg shadow-red-500/20"
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
                     >
                         {isCopying ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         {isCopying ? 'Copied!' : 'Copy Top 100'}
                     </button>
                     <button
                         onClick={logout}
-                        className="px-4 py-2 border border-[#1e3d2f] hover:bg-[#0a1510] rounded-lg text-sm font-medium transition-colors text-[#9fb8a8]"
+                        className="px-4 py-2 border border-zinc-800 hover:bg-zinc-900 rounded-lg text-sm font-medium transition-colors text-zinc-300"
                     >
                         Logout
                     </button>
@@ -210,28 +210,28 @@ export default function BotUsersPage() {
             </div>
 
             {/* Search Bar */}
-            <div className="bg-[#0a1510]/40 p-4 rounded-xl border border-[#1e3d2f]/50 backdrop-blur-sm">
+            <div className="bg-zinc-900/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
                 <form onSubmit={handleSearch} className="flex gap-3">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6b9b7f]" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
                         <input
                             type="text"
                             placeholder="Search by username or name..."
-                            className="w-full bg-[#0f1f17] border border-[#1e3d2f] rounded-lg pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-[#4ade80] transition-colors"
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-colors"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <button
                         type="submit"
-                        className="px-6 py-2.5 bg-[#0a1510] hover:bg-[#1e3d2f] border border-[#1e3d2f] text-white rounded-lg font-medium transition-colors"
+                        className="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg font-medium transition-colors"
                     >
                         Search
                     </button>
                     <button
                         type="button"
                         onClick={toggleSortOrder}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-[#0a1510] hover:bg-[#1e3d2f] text-white rounded-lg font-medium transition-colors border border-[#1e3d2f]"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg font-medium transition-colors border border-zinc-700"
                         title="Sort by score"
                     >
                         <ArrowDownUp className="w-4 h-4" />
@@ -241,49 +241,49 @@ export default function BotUsersPage() {
             </div>
 
             {/* Results Table */}
-            <div className="bg-[#0a1510]/40 rounded-xl border border-[#1e3d2f]/50 overflow-hidden backdrop-blur-sm">
+            <div className="bg-zinc-900/40 rounded-xl border border-white/5 overflow-hidden backdrop-blur-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-[#0a1510]/50 border-b border-[#1e3d2f]/50">
+                        <thead className="bg-zinc-900/50 border-b border-white/5">
                             <tr>
-                                <th className="px-6 py-4 text-sm font-semibold text-[#9fb8a8]">Telegram ID</th>
-                                <th className="px-6 py-4 text-sm font-semibold text-[#9fb8a8]">User Details</th>
-                                <th className="px-6 py-4 text-sm font-semibold text-[#9fb8a8]">Wallet</th>
-                                <th className="px-6 py-4 text-sm font-semibold text-[#9fb8a8] text-right">Points</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-zinc-400">Telegram ID</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-zinc-400">User Details</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-zinc-400">Wallet</th>
+                                <th className="px-6 py-4 text-sm font-semibold text-zinc-400 text-right">Points</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#1e3d2f]/30">
+                        <tbody className="divide-y divide-white/5">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={3} className="px-6 py-12 text-center text-[#6b9b7f]">
+                                    <td colSpan={3} className="px-6 py-12 text-center text-zinc-500">
                                         Loading users...
                                     </td>
                                 </tr>
                             ) : users.length === 0 ? (
                                 <tr>
-                                    <td colSpan={3} className="px-6 py-12 text-center text-[#6b9b7f]">
+                                    <td colSpan={3} className="px-6 py-12 text-center text-zinc-500">
                                         No users found.
                                     </td>
                                 </tr>
                             ) : (
                                 users.map((user) => (
-                                    <tr key={user.id} className="hover:bg-[#0a1510]/20 transition-colors">
-                                        <td className="px-6 py-4 text-[#9fb8a8] font-mono text-sm">
+                                    <tr key={user.id} className="hover:bg-zinc-800/20 transition-colors">
+                                        <td className="px-6 py-4 text-zinc-400 font-mono text-sm">
                                             {user.telegramId ? user.telegramId.toString() : 'N/A'}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="font-medium text-white">
                                                 {user.first_name} {user.last_name}
                                             </div>
-                                            <div className="text-sm text-[#6b9b7f]">
+                                            <div className="text-sm text-zinc-500">
                                                 @{user.username || 'unknown'}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-mono text-[#9fb8a8] text-sm">
+                                        <td className="px-6 py-4 font-mono text-zinc-400 text-sm">
                                             {user.walletAddress || user.wallet || 'N/A'}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#4ade80]/10 text-[#4ade80] font-medium text-sm">
+                                            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-medium text-sm">
                                                 {user.gamePLay?.score || 0} pts
                                             </span>
                                         </td>
@@ -295,21 +295,21 @@ export default function BotUsersPage() {
                 </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 border-t border-[#1e3d2f]/50 flex items-center justify-between bg-[#0a1510]/20">
+                <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-zinc-900/20">
                     <button
                         onClick={() => setSkip(Math.max(0, skip - take))}
                         disabled={skip === 0 || loading}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[#9fb8a8] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         <ChevronLeft className="w-4 h-4" /> Previous
                     </button>
-                    <span className="text-sm text-[#6b9b7f]">
+                    <span className="text-sm text-zinc-500">
                         Showing {skip + 1} to {skip + users.length}
                     </span>
                     <button
                         onClick={() => setSkip(skip + take)}
                         disabled={users.length < take || loading}
-                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[#9fb8a8] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         Next <ChevronRight className="w-4 h-4" />
                     </button>
